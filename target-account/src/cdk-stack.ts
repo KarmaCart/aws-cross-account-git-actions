@@ -16,34 +16,34 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import * as core from 'aws-cdk-lib';
+import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import * as iam from 'aws-cdk-lib/aws-iam';
+import { ArnPrincipal, Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
 /**
- * Custom properties to accomodate list of code deployment buckets across different regions
+ * Custom properties to accommodate list of code deployment buckets across different regions
  */
-interface EnvProps extends core.StackProps{
+interface EnvProps extends StackProps{
   toolsAccountUserArn: string;
 }
 
-export class CrossAccountRolesStack extends core.Stack {
+export class CrossAccountRolesStack extends Stack {
   constructor(scope: Construct, id: string, props?: EnvProps) {
     super(scope, id, props);
 
     // Create Cloudformation Execution Role
-    const cfExecutionRole = new iam.Role(
+    const cfExecutionRole = new Role(
       this,
       'GitActionsCFExecutionRole',
       {
-        assumedBy: new iam.ServicePrincipal('cloudformation.amazonaws.com'),
+        assumedBy: new ServicePrincipal('cloudformation.amazonaws.com'),
         description: 'Role assumed by cloudformation service while creating the required resources',
         roleName: 'git-action-cf-execution-role',
         inlinePolicies: {
-          CFExecutionPolicy: new iam.PolicyDocument({
+          CFExecutionPolicy: new PolicyDocument({
             assignSids: true,
             statements: [
-              new iam.PolicyStatement({
+              new PolicyStatement({
                 actions: [
                   'iam:Get*',
                   'iam:List*',
@@ -53,25 +53,25 @@ export class CrossAccountRolesStack extends core.Stack {
                   'iam:*PolicyVersion*',
                   'iam:*InstanceProfile*'
                 ],
-                effect: iam.Effect.ALLOW,
+                effect: Effect.ALLOW,
                 resources: [
                   '*'
                 ]
               }),
-              new iam.PolicyStatement({
+              new PolicyStatement({
                 actions: [
                   's3:*'
                 ],
-                effect: iam.Effect.ALLOW,
+                effect: Effect.ALLOW,
                 resources: [
                   '*'
                 ]
               }),
-              new iam.PolicyStatement({
+              new PolicyStatement({
                 actions: [
                   'cloudformation:*'
                 ],
-                effect: iam.Effect.ALLOW,
+                effect: Effect.ALLOW,
                 resources: [
                   '*'
                 ]
@@ -83,60 +83,60 @@ export class CrossAccountRolesStack extends core.Stack {
     )
 
     // Create a cross account role
-    const crossAccountRole = new iam.Role(
+    const crossAccountRole = new Role(
       this,
       'CrossAccountRole',
       {
-        assumedBy: new iam.ArnPrincipal(String(props?.toolsAccountUserArn)),
+        assumedBy: new ArnPrincipal(String(props?.toolsAccountUserArn)),
         description: 'Cross account role to be assumed by Raven tools account. Used for CICD deployments only.',
         roleName: 'git-action-cross-account-role',
         inlinePolicies: {
-          CrossAccountPolicy: new iam.PolicyDocument({
+          CrossAccountPolicy: new PolicyDocument({
             assignSids: true,
             statements: [
-              new iam.PolicyStatement({
+              new PolicyStatement({
                 actions: [
                   'iam:PassRole'
                 ],
-                effect: iam.Effect.ALLOW,
+                effect: Effect.ALLOW,
                 resources: [
                   cfExecutionRole.roleArn
                 ]
               }),
-              new iam.PolicyStatement({
+              new PolicyStatement({
                 actions: [
                   's3:List*'
                 ],
-                effect: iam.Effect.ALLOW,
+                effect: Effect.ALLOW,
                 resources: [
                   '*'
                 ]
               }),
-              new iam.PolicyStatement({
+              new PolicyStatement({
                 actions: [
                   's3:*'
                 ],
-                effect: iam.Effect.ALLOW,
+                effect: Effect.ALLOW,
                 resources: [
                   // This is staging bucket created by CDKToolkit stack when CDK app is bootstrapped
                   'arn:aws:s3:::cdktoolkit-stagingbucket-*',
                   'arn:aws:s3:::cdktoolkit-stagingbucket-*/*'
                 ]
               }),
-              new iam.PolicyStatement({
+              new PolicyStatement({
                 actions: [
                   'cloudformation:*'
                 ],
-                effect: iam.Effect.ALLOW,
+                effect: Effect.ALLOW,
                 resources: [
                   '*'
                 ]
               }),
-              new iam.PolicyStatement({
+              new PolicyStatement({
                 actions: [
                   'ssm:GetParameter'
                 ],
-                effect: iam.Effect.ALLOW,
+                effect: Effect.ALLOW,
                 resources: [
                   '*'
                 ]
@@ -148,14 +148,14 @@ export class CrossAccountRolesStack extends core.Stack {
     );
 
     // STS Session Tagging Permission
-    const sessionTaggingPolicy = new iam.PolicyStatement()
-    sessionTaggingPolicy.addPrincipals(new iam.ArnPrincipal(String(props?.toolsAccountUserArn)));
+    const sessionTaggingPolicy = new PolicyStatement()
+    sessionTaggingPolicy.addPrincipals(new ArnPrincipal(String(props?.toolsAccountUserArn)));
     sessionTaggingPolicy.addActions('sts:TagSession');
-    sessionTaggingPolicy.effect = iam.Effect.ALLOW;
+    sessionTaggingPolicy.effect = Effect.ALLOW;
     crossAccountRole.assumeRolePolicy?.addStatements(sessionTaggingPolicy)
 
     /*********************************** List of Outputs ************************************/
-    new core.CfnOutput(
+    new CfnOutput(
       this,
       'CFExecutionRoleArn',
       {
@@ -165,7 +165,7 @@ export class CrossAccountRolesStack extends core.Stack {
       }
     )
 
-    new core.CfnOutput(
+    new CfnOutput(
       this,
       'CrossAccountRoleArn',
       {

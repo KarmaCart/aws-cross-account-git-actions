@@ -17,7 +17,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 import 'source-map-support/register';
-import * as cdk from 'aws-cdk-lib';
+import { App } from 'aws-cdk-lib';
 import { CrossAccountRolesStack } from './src/cdk-stack';
 import fs from 'fs';
 
@@ -25,7 +25,7 @@ import fs from 'fs';
 const params = JSON.parse(fs.readFileSync('src/cdk-stack-param.json', 'utf-8'))
 
 // Create App
-const app = new cdk.App();
+const app = new App();
 // IAM Roles Stack
 new CrossAccountRolesStack(app, 'CrossAccountRolesStack', {
   description: 'Creates Cross Account Role and Cloudformation Execution Roles',

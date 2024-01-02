@@ -1,22 +1,22 @@
-import * as core from 'aws-cdk-lib';
+import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import * as iam from 'aws-cdk-lib/aws-iam';
-import * as secretmanager from 'aws-cdk-lib/aws-secretsmanager';
+import { CfnAccessKey, Effect, Policy, PolicyStatement, User } from 'aws-cdk-lib/aws-iam';
+import { CfnSecret } from 'aws-cdk-lib/aws-secretsmanager';
 
 /**
  * Custom properties to define cross account deployment role
  */
-interface EnvProps extends core.StackProps{
+interface EnvProps extends StackProps{
   crossAccountRoleArn: string;
 }
 
-export class GitActionDeploymentUserStack extends core.Stack {
+export class GitActionDeploymentUserStack extends Stack {
   constructor(scope: Construct, id: string, props?: EnvProps) {
     super(scope, id, props);
 
     // Create IAM User
     // Git action will piggy back on this IAM User and assume cross account role for deployment. 
-    const deploymentUser = new iam.User(
+    const deploymentUser = new User(
       this,
       'GitActionDeploymentUser',
       {
@@ -26,27 +26,27 @@ export class GitActionDeploymentUserStack extends core.Stack {
 
     // IAM policy for deployment user
     deploymentUser.attachInlinePolicy(
-      new iam.Policy(
+      new Policy(
         this,
         'GitActionDeploymentUserPolicy',
         {
           statements: [
-            new iam.PolicyStatement({
+            new PolicyStatement({
               sid: 'CrossAccountAssumeRole',
               actions: [
                 'sts:AssumeRole'
               ],
-              effect: iam.Effect.ALLOW,
+              effect: Effect.ALLOW,
               resources: [
                 String(props?.crossAccountRoleArn)
               ]
             }),
-            new iam.PolicyStatement({
+            new PolicyStatement({
               sid: 'STSSessionTagging',
               actions: [
                 'sts:TagSession'
               ],
-              effect: iam.Effect.ALLOW,
+              effect: Effect.ALLOW,
               resources: [
                 '*'
               ]
@@ -57,7 +57,7 @@ export class GitActionDeploymentUserStack extends core.Stack {
     )
 
     // Access Key for the user
-    const accessKey = new iam.CfnAccessKey(
+    const accessKey = new CfnAccessKey(
       this,
       'GitActionDeploymentUserAccessKey',
       {
@@ -66,7 +66,7 @@ export class GitActionDeploymentUserStack extends core.Stack {
     )
 
     // Secret for the user will be stored in secret manager
-    const secret = new secretmanager.CfnSecret(
+    const secret = new CfnSecret(
       this,
       'GitActionDeploymentUserSecret',
       {
@@ -77,7 +77,7 @@ export class GitActionDeploymentUserStack extends core.Stack {
     )
 
     /*********************************** List of Outputs ************************************/
-    new core.CfnOutput(
+    new CfnOutput(
       this,
       'OutGitActionDeploymentUserArn',
       {
@@ -87,7 +87,7 @@ export class GitActionDeploymentUserStack extends core.Stack {
       }
     )
 
-    new core.CfnOutput(
+    new CfnOutput(
       this,
       'OutGitActionDeploymentUserAccessKey',
       {
@@ -97,7 +97,7 @@ export class GitActionDeploymentUserStack extends core.Stack {
       }
     )
 
-    new core.CfnOutput(
+    new CfnOutput(
       this,
       'OutGitActionDeploymentUserSecretArn',
       {
