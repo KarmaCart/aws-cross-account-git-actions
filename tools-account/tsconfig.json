@@ -23,5 +23,8 @@
     "resolveJsonModule": true,
     "esModuleInterop": true
   },
-  "exclude": ["cdk.out"]
+  "exclude": [
+    "cdk.out",
+    "./dist/**/*"
+  ]
 }
