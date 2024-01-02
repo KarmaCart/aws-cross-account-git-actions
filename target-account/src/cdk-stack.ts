@@ -75,6 +75,34 @@ export class CrossAccountRolesStack extends Stack {
                 resources: [
                   '*'
                 ]
+              }),
+              new PolicyStatement({
+                actions: [
+                  'lambda:*'
+                ],
+                effect: Effect.ALLOW,
+                resources: [
+                  '*'
+                ]
+              }),
+              new PolicyStatement({
+                actions: [
+                  'apigateway:*'
+                ],
+                effect: Effect.ALLOW,
+                resources: [
+                  '*'
+                ]
+              }),
+              new PolicyStatement({
+                actions: [
+                  'ssm:GetParameter',
+                  'ssm:GetParameters'
+                ],
+                effect: Effect.ALLOW,
+                resources: [
+                  '*'
+                ]
               })
             ]
           })
@@ -141,6 +169,15 @@ export class CrossAccountRolesStack extends Stack {
                   '*'
                 ]
               }),
+              new PolicyStatement({
+                actions: [
+                  'sts:AssumeRole'
+                ],
+                effect: Effect.ALLOW,
+                resources: [
+                  'arn:aws:iam::740207786562:role/cdk-hnb659fds-*'
+                ]
+              })
             ]
           })
         }
