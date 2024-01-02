@@ -1,0 +1,3 @@
+{
+    "TOOLS_ACCOUNT_USER_ARN": "arn:aws:iam::${TOOLS_ACCOUNT_NUMBER}:user/git-action-deployment-user"
+}

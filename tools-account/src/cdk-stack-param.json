@@ -1,0 +1,3 @@
+{
+    "CROSS_ACCOUNT_ROLE_ARN": "arn:aws:iam::${TARGET_ACCOUNT_NUMBER}:role/git-action-cross-account-role"
+}
