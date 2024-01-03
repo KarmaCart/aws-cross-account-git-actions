@@ -18,7 +18,7 @@ AWS_PROFILE=$1
 npm ci
 npm run build
 
-#cdk bootstrap --profile $AWS_PROFILE
+cdk bootstrap --profile $AWS_PROFILE
 
 cdk diff --profile $AWS_PROFILE
 
