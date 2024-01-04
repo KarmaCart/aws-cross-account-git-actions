@@ -175,7 +175,7 @@ export class CrossAccountRolesStack extends Stack {
                 ],
                 effect: Effect.ALLOW,
                 resources: [
-                  'arn:aws:iam::740207786562:role/cdk-hnb659fds-*'
+                  `arn:aws:iam::${this.account}:role/cdk-hnb659fds-*`
                 ]
               })
             ]
