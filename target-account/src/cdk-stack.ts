@@ -85,6 +85,24 @@ export class CrossAccountRolesStack extends Stack {
                 resources: [
                   '*'
                 ]
+              }),
+              new PolicyStatement({
+                actions: [
+                  'acm:*'
+                ],
+                effect: Effect.ALLOW,
+                resources: [
+                  '*'
+                ]
+              }),
+              new PolicyStatement({
+                actions: [
+                  'cloudfront:*'
+                ],
+                effect: Effect.ALLOW,
+                resources: [
+                  '*'
+                ]
               })
             ]
           })
