@@ -5,9 +5,6 @@ It was forked from [this repo](https://github.com/awslabs/aws-cross-account-cicd
 
 The original guide for cross account deploys using the cdk and GitHub actions located [here](https://aws.amazon.com/blogs/devops/cross-account-and-cross-region-deployment-using-github-actions-and-aws-cdk/).
 
-## Prerequisites
-arn:aws:iam::TOOLS_ACCOUNT_NUMBER:user/git-action-deployment-user is created in the Tools account.
-
 ## Usage
 
 Initialize profile in .aws/credentials (Remember to specify the region).
