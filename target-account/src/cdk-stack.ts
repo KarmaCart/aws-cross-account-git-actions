@@ -103,6 +103,24 @@ export class CrossAccountRolesStack extends Stack {
                 resources: [
                   '*'
                 ]
+              }),
+              new PolicyStatement({
+                actions: [
+                  'logs:*'
+                ],
+                effect: Effect.ALLOW,
+                resources: [
+                  '*'
+                ]
+              }),
+              new PolicyStatement({
+                actions: [
+                  'cognito-idp:*'
+                ],
+                effect: Effect.ALLOW,
+                resources: [
+                  '*'
+                ]
               })
             ]
           })
