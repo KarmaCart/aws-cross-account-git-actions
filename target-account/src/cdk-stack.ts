@@ -121,6 +121,15 @@ export class CrossAccountRolesStack extends Stack {
                 resources: [
                   '*'
                 ]
+              }),
+              new PolicyStatement({
+                actions: [
+                  'dynamodb:*'
+                ],
+                effect: Effect.ALLOW,
+                resources: [
+                  '*'
+                ]
               })
             ]
           })
