@@ -1,5 +1,5 @@
 # aws-cross-account-git-actions
-This repo contains the cdk infrastructure to enable cross account deploys from a Tools AWS account to a Target AWS account using GitHub Actions.
+This repo contains the cdk infrastructure to enable cross account deploys from a Tools AWS account to a Target AWS account. Other tools such as GitHub Actions can then gain temporary STS credentials to assume a IAM role to execute deployments with Cloudformation.
 
 It was forked from [this repo](https://github.com/awslabs/aws-cross-account-cicd-git-actions-prereq) and converted to use cdk v2 (Along with some fixes to the role structures missing in the original repo).
 
